@@ -8,11 +8,12 @@ namespace Library
 {
     internal class Member
     {
-        public Member(string name, string city,uint numOfBorrows = 0)
+        public Member(string name, string city,uint numOfBorrows = 0, bool ispremuim = false)
         {
             Name = name;
             City = city;
             NumOfBorrows = 0;
+            IsPremuim = ispremuim;
         }
 
         public int ID { get; private set;}

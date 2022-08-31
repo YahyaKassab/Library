@@ -20,13 +20,14 @@ namespace Library
                 DeleteAll,
 
             }
+        //work with print members selects
 
         static void Main(string[] args)
         {
             List<Book> books = new List<Book>();
             List<Novel> novels = new List<Novel>();
-          List<Borrow> borrows = new List<Borrow>();
-          List<Member> members = new List<Member>();
+            List<Borrow> borrows = new List<Borrow>();
+            List<Member> members = new List<Member>();
             books.Add(new Book("The Great Gatsby","F. Scott Fitzgerald", 3, 80));
             books.Add(new Book("The Grapes of Wrath","John Steinbeck", 4, 45));
             books.Add(new Book("Nineteen Eighty-Four","George Orwell", 5 , 120));
@@ -34,76 +35,92 @@ namespace Library
             novels.Add(new Novel("Lolita","Joseph Heller", 8, 14,90));
             novels.Add(new Novel("Catch-22","J. D. Salinger", 2, 22,110));
             novels.Add(new Novel("Beloved","William Faulkner", 3,12,105));
-            string av;
-          void printBook(Book item)
+            void printBook(Book item)
             {
-                if (item.IsAvailable)
-                {
-                    av = "Available";
-                }
-                else
+                string av = "Available";
+                if (!item.IsAvailable)
                 {
                     av = "Not Available";
                 }
-                Console.Write($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(12,' ')}");
+                Console.WriteLine($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(15,' ')}|${item.Price.ToString().PadRight(3,' ')}");
             }
-          void printNovel(Novel item)
+            void printNovel(Novel item)
             {
-                Console.Write($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(12,' ')} |{item.NumOfVolumes.ToString().PadRight(3,' ')}");
+                string av = "Available";
+                if (!item.IsAvailable)
+                {
+                    av = "Not Available";
+                }
+                Console.WriteLine($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(15,' ')} |${item.Price.ToString().PadRight(6,' ')} |{item.NumOfVolumes.ToString().PadRight(6,' ')}");
             }
-          void printBooks(IEnumerable<Book> objects)
+            void printBooks(IEnumerable<Book> Books)
             {
+                var MemberBook = from borr in borrows
+                                 join book in Books on borr.BookID equals book.ID
+                                 join m in members on borr.MemberID equals m.ID
+                                 select new
+                                 {
+                                     BookName = book.Title, AuthorName = book.AuthorName, Price = book.Price, MemberName = m.Name, IsAvailable = book.IsAvailable
+                                 };
                 Console.WriteLine("Books".PadRight(50,' '));
                 Console.WriteLine("==============================================================================");
+                Console.WriteLine($"{"Title".PadRight(20,' ')} |{"AuthorName".PadRight(20,' ')} |{"State".PadRight(15,' ')} |{"Price".PadRight(6,' ')}|{"Borrowers".PadRight(15, ' ')} ");
+
                 string av;
-                foreach(var item in objects)
+                foreach(var item in MemberBook)
                 {
                 if(item.IsAvailable)av = "Available";
                 else av = "Not Available";
-                    Console.Write($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(12,' ')}");
+                    Console.WriteLine($"{item.BookName.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(15,' ')} |${item.Price.ToString().PadRight(3,' ')}|{item.MemberName.PadRight(15, ' ')} ");
                 }
             }
-          void printNovels(IEnumerable<Novel> objects)
+            void printNovels(IEnumerable<Novel> Novels)
             {
                 string av;
+                var MemberBook = from borr in borrows
+                                 join nov in Novels on borr.BookID equals nov.ID
+                                 join m in members on borr.MemberID equals m.ID
+                                 select new
+                                 {
+                                     BookName = nov.Title, AuthorName = nov.AuthorName, Price = nov.Price, Vols = nov.NumOfVolumes, MemberName = m.Name, IsAvailable = nov.IsAvailable
+                                 };
+                    
                 Console.WriteLine("Novels".PadRight(50,' '));
                 Console.WriteLine("==============================================================================");
-                foreach(var item in objects)
+                Console.WriteLine($"{"Title".PadRight(20,' ')} |{"AuthorName".PadRight(20,' ')} |{"State".PadRight(15,' ')}|{"Price".PadRight(6,' ')} |{"Borrowers".PadRight(15, ' ')} |{"Vols".PadRight(6,' ')}");
+                foreach(var item in MemberBook)
                 {
                 if(item.IsAvailable)av = "Available";
                 else av = "Not Available";
-                    Console.Write($"{item.Title.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(12,' ')} |{item.NumOfVolumes.ToString().PadRight(3,' ')}");
+                    Console.WriteLine($"{item.BookName.PadRight(20,' ')} |{item.AuthorName.PadRight(20,' ')} |{av.PadRight(15,' ')}|${item.Price.ToString().PadRight(6,' ')} |{item.MemberName.PadRight(15, ' ')} |{item.Vols.ToString().PadRight(6,' ')}");
                 }
             }
-          void PrintAll()
+            void PrintAll()
             {
                 printBooks(books);
                 printNovels(novels);
             }
-          void printMember(Member member)
+            void printMember(Member member)
             {
                 string prem = member.IsPremuim ? "Premuim" : "Not Premuim";
                 Console.WriteLine($"{member.Name.PadRight(15,' ')} |{member.City.PadRight(15,' ')} |{prem.PadRight(15,' ')}");
             }
-          bool IsMember()
+            bool IsMember(string name)
             {
-                Console.Write("Enter Your Name:");
-                string name = Console.ReadLine().ToLower();
                 if(!members.Exists(m=>m.Name.ToLower() == name))
                 {
                     Console.WriteLine("You Are Not A Member Let's Make You one");
+                    Console.ReadKey();
                     return false;
                 }
                 return true;
             }
-          Member GetMember()
+            Member GetMember(string name)
             {
-                Console.Write("Enter Your Name:");
-                string name = Console.ReadLine().ToLower();
-                Member member = members.First(members => members.Name.ToLower() == name.ToLower());
+                Member member = members.Find(members => members.Name.ToLower() == name.ToLower());
                 return member;
             }
-           int EnjoyBook(Member member, Book book)
+            int EnjoyBook(Member member, Book book)
             {
                 if(book.NumOfBooks == 0)
                 {
@@ -167,7 +184,7 @@ namespace Library
                         return (false,book);
                 }
             }
-          void BorrowBook()
+            void BorrowBook()
             {
                 Member member = new Member("Yahya","ismailia");
                 bool confirm;
@@ -181,15 +198,22 @@ namespace Library
                 switch (ans)
                 {
                     case 'y':
-                        if(IsMember())  
-                        member = GetMember();
-                        printMember(member);
+                            Console.Write("Enter Your Name:");
+                            string name = Console.ReadLine();
+                            if (IsMember(name))
+                            {
+                              member = GetMember(name);
+                              printMember(member);
+                            }else
+                            {
+                                string Membername = AddMember();
+                            }
                         Console.WriteLine($"OK {member.Name}, Press Any Key To Continue");
                         Console.ReadKey();
                         break;
                     case 'n':
-                        string name = AddMember();
-                        Console.WriteLine($"OK {name}, Press Any Key To Continue");
+                        string Mname = AddMember();
+                        Console.WriteLine($"OK {Mname}, Press Any Key To Continue");
                         break;
                     default:
                         Console.WriteLine("Wrong input");
@@ -203,7 +227,7 @@ namespace Library
                 bool cont;
                 Console.WriteLine("Search For The Book");
                 string Search = Console.ReadLine().ToLower();
-                char c = 's';
+                char c = 'y';
                 bool existsTitleBook = books.ToList().Exists(n=>n.Title.ToLower() == Search);
                 bool existsTitleNovel = novels.ToList().Exists(n=>n.Title.ToLower() == Search);
                 bool existsAuthorBook = books.ToList().Exists(n=>n.AuthorName.ToLower() == Search);
@@ -216,34 +240,28 @@ namespace Library
                     }
                     cont = exists;
                     
-                     //   char c;
+                      //  char c;
 
                         confirm = true;
                     if (existsTitleBook)
                     {
-                        Book searchedB = SearchBorrowBook(confirm,Search.ToLower()).Item2;
+                        var searchedB = SearchBorrowBook(confirm,Search.ToLower());
+                        //Console.WriteLine(SearchBorrowBook(confirm,Search.ToLower()).Item1);
 
-                        switch (c)
+                        if (searchedB.Item1)
                         {
-                            case 'y':
-                                EnjoyBook(member,searchedB);
-                                break;
-                            default :
-                                continue;
-                                break;
+
+                                EnjoyBook(member,searchedB.Item2);
+
                         }
                     }
                     else if (existsTitleNovel)
                     {
-                        Novel searchedN = SearchBorrowNovel(confirm,Search.ToLower()).Item2;
-                        switch (c)
+                        var searchedN = SearchBorrowNovel(confirm,Search.ToLower());
+
+                        if (searchedN.Item1)
                         {
-                            case 'y':
-                                EnjoyNovel(member,searchedN);
-                                break;
-                            default :
-                                continue;
-                                break;
+                                EnjoyNovel(member,searchedN.Item2);
                         }
 
                     } 
@@ -336,7 +354,7 @@ namespace Library
 
 
             }
-          void AddBook()
+            void AddBook()
             {
                 Console.Write("Enter Book Title:");
                 string title = Console.ReadLine();
@@ -361,7 +379,7 @@ namespace Library
                 books.Add(new Book(title,author,copies,price));
                 Console.WriteLine("Book Added Successfully");
             }
-          string AddMember()
+            string AddMember()
             {
                 Console.Clear();
                 Console.Write("Enter Member's Name:");
@@ -373,7 +391,7 @@ namespace Library
                 return name;
 
             }
-          void AddNovel()
+            void AddNovel()
             {
                 Console.Write("Enter Novel Title:");
                 string title = Console.ReadLine();
@@ -407,7 +425,7 @@ namespace Library
                 Console.WriteLine("Novel Added Successfully");
 
             }
-          void AddDoc()
+            void AddDoc()
         {
             bool success;
             do
@@ -438,6 +456,23 @@ namespace Library
                 return member;
 
             }
+            void PrintMembers()
+            {
+                var MembersBooks = from bo in borrows
+                                   join book in books on bo.BookID equals book.ID
+                                   join m in members on bo.MemberID equals m.ID
+                                   select new
+                                   {
+                                       MemberName = m.Name, City = m.City, Status = m.IsPremuim, Books = book.Title
+                                   };
+                Console.WriteLine("Members".PadRight(50,' '));
+                Console.WriteLine($"{"Name".PadRight(15,' ')} |{"City".PadRight(12,' ')} |{"Status".PadRight(25,' ')} |{"Books".PadRight(20,' ')}");
+                foreach(var m in MembersBooks)
+                {
+                string status = m.Status == true? "Premuim" : "Not Premuim";
+                Console.WriteLine($"{m.MemberName.PadRight(15,' ')} |{m.City.PadRight(12,' ')} |{status.PadRight(25,' ')} |{m.Books.PadRight(20,' ')}");
+                }
+            }
             void DeleteMember()
             {
                 Member member = SearchMember();
@@ -451,8 +486,14 @@ namespace Library
                 borrows.Clear();
                 
             }
-                int opt;
-           // dfsfsd
+            void ReturnBook()
+            {
+                Console.Write("Enter Your Name:");
+                string name = Console.ReadLine();
+                Member member = GetMember(name);
+                
+            }
+                   int opt;
             do
             {
                 Console.Clear();
@@ -475,7 +516,7 @@ namespace Library
                     if (!int.TryParse(selectionString, out opt))
                         Console.WriteLine("Invalid Selection ");
 
-                } while (opt > 8 || opt < 0);
+                } while (opt > 11 || opt < 0);
 
                 Console.Clear();
                 Options option = (Options)opt;
@@ -516,7 +557,7 @@ namespace Library
                         Console.ReadKey();
                         break;
                     case Options.PrintMembers:
-                        
+                        PrintMembers();
                         Console.ReadKey();
                         break;
                     case Options.DeleteMember:
@@ -524,7 +565,7 @@ namespace Library
                         Console.ReadKey();
                         break;
                     case Options.DeleteAll:
-                        
+                        DeleteAll();
                         Console.ReadKey();
                         break;
                     default:
