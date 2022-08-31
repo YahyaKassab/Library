@@ -234,7 +234,7 @@ namespace Library
                 bool existsAuthorNovel = novels.ToList().Exists(n=>n.AuthorName.ToLower() == Search);
                 exists = existsTitleBook || existsAuthorBook || existsTitleNovel || existsAuthorNovel ;
                 if(!exists){
-                        
+                       
                         Console.WriteLine("Sorry, We dont Have the book");
                         continue;
                     }
