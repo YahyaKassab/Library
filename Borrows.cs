@@ -8,7 +8,7 @@ namespace Library
 {
     internal class Borrow
     {
-        public Borrow(int bookID, int memberID, DateOnly borrowDate)
+        public Borrow(int bookID, int memberID, DateTime borrowDate)
         {
             BookID = bookID;
             MemberID = memberID;
@@ -17,7 +17,7 @@ namespace Library
 
         public int BookID { get; set; }
         public int MemberID { get; set; }
-        public DateOnly BorrowDate { get; set; }
-        public Nullable<DateOnly> ReturnDate { get; set; }
+        public DateTime BorrowDate { get; set; }
+        public Nullable<DateTime> ReturnDate { get; set; }
     }
 }

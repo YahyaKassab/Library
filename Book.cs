@@ -9,11 +9,12 @@ namespace Library
     internal class Book
     {
         uint _numOfBooks;
-        public Book( string title, string authorName, uint numOfBooks)
+        public Book( string title, string authorName, uint numOfBooks,double price)
         {
             Title = title;
             AuthorName = authorName;
             _numOfBooks = numOfBooks;
+            Price = price;
             
         } 
         public Book SetData()
@@ -52,7 +53,8 @@ namespace Library
         public int ID {get; set;}
         public string Title{ get; set; }
         public string AuthorName { get; set; }
-        public bool IsAvailable { get; private set; }
+        public bool IsAvailable { get; set; }
+        public double Price { get; set; }
 
     }
 }
